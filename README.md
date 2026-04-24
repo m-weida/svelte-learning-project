@@ -31,6 +31,24 @@ pnpm build
 pnpm preview
 ```
 
+## Theme export/import
+
+1. Switch to **Custom** theme and tweak colors.
+2. Click **Download custom theme** to save a JSON file.
+3. Click **Import theme** and choose a previously exported JSON file.
+
+Theme files use this shape:
+
+```json
+{
+  "version": 1,
+  "name": "custom",
+  "custom": {
+    "...": "#RRGGBB"
+  }
+}
+```
+
 ## How this project was scaffolded
 
 ```sh

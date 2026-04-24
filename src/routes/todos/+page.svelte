@@ -67,15 +67,18 @@
 
 	input {
 		padding: 0.4rem;
-		border: 1px solid #bfd5ec;
+		border: 1px solid var(--color-border);
 		border-radius: 8px;
+		background: var(--color-input-bg);
+		color: var(--color-text);
 	}
 
 	button {
 		padding: 0.35rem 0.6rem;
-		border: 1px solid #bfd5ec;
+		border: 1px solid var(--color-border);
 		border-radius: 8px;
-		background: #eff7ff;
+		background: var(--color-button-bg);
+		color: var(--color-text);
 		cursor: pointer;
 	}
 
@@ -91,7 +94,7 @@
 		align-items: center;
 		gap: 0.75rem;
 		padding: 0.5rem 0;
-		border-bottom: 1px solid #edf3fa;
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	label {
@@ -102,6 +105,6 @@
 
 	.done {
 		text-decoration: line-through;
-		color: #71808e;
+		color: var(--color-text-muted);
 	}
 </style>

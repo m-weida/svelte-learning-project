@@ -4,6 +4,59 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
+		<script>
+			(() => {
+				const storageKey = 'svelte-playground-theme-v1';
+				const tokenToVar = {
+					bg: '--color-bg',
+					bgAlt: '--color-bg-alt',
+					surface: '--color-surface',
+					surfaceSoft: '--color-surface-soft',
+					text: '--color-text',
+					textMuted: '--color-text-muted',
+					border: '--color-border',
+					primary: '--color-primary',
+					primarySoft: '--color-primary-soft',
+					buttonBg: '--color-button-bg',
+					inputBg: '--color-input-bg',
+					gradientStart: '--color-gradient-start',
+					gradientEnd: '--color-gradient-end',
+					link: '--color-link'
+				};
+
+				const root = document.documentElement;
+
+				try {
+					const rawTheme = window.localStorage.getItem(storageKey);
+					if (!rawTheme) {
+						root.setAttribute('data-theme', 'light');
+						return;
+					}
+
+					const parsed = JSON.parse(rawTheme);
+					const themeName = parsed?.name;
+					if (themeName !== 'light' && themeName !== 'dark' && themeName !== 'custom') {
+						root.setAttribute('data-theme', 'light');
+						return;
+					}
+
+					root.setAttribute('data-theme', themeName);
+
+					if (themeName !== 'custom' || !parsed?.custom || typeof parsed.custom !== 'object') {
+						return;
+					}
+
+					for (const [token, cssVarName] of Object.entries(tokenToVar)) {
+						const value = parsed.custom[token];
+						if (typeof value === 'string') {
+							root.style.setProperty(cssVarName, value);
+						}
+					}
+				} catch {
+					root.setAttribute('data-theme', 'light');
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

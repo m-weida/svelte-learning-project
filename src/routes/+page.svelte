@@ -59,10 +59,26 @@
 
 	.card {
 		display: block;
-		border: 1px solid #d8e8f8;
+		border: 1px solid var(--color-border);
 		border-radius: 12px;
 		padding: 0.9rem;
-		background: #f7fbff;
+		background: var(--color-surface-soft);
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.card:visited,
+	.card:active {
+		color: var(--color-text);
+	}
+
+	.card h3 {
+		color: var(--color-link);
+	}
+
+	.card:visited h3,
+	.card:active h3 {
+		color: var(--color-link);
 	}
 
 	.card h3 {
@@ -82,7 +98,7 @@
 	td {
 		text-align: left;
 		padding: 0.55rem;
-		border-bottom: 1px solid #e7edf4;
+		border-bottom: 1px solid var(--color-border);
 		vertical-align: top;
 	}
 
