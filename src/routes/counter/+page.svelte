@@ -61,8 +61,8 @@
 
 <style>
 	.panel {
-		border: 1px solid #d8e8f8;
-		background: #f7fbff;
+		border: 1px solid var(--color-border);
+		background: var(--color-surface-soft);
 		padding: 0.9rem;
 		border-radius: 12px;
 		max-width: 420px;
@@ -78,6 +78,10 @@
 		max-width: 90px;
 		margin-bottom: 0.75rem;
 		padding: 0.3rem;
+		background: var(--color-input-bg);
+		border: 1px solid var(--color-border);
+		color: var(--color-text);
+		border-radius: 8px;
 	}
 
 	.buttons {
@@ -88,9 +92,10 @@
 
 	button {
 		padding: 0.35rem 0.6rem;
-		border: 1px solid #c6d8eb;
+		border: 1px solid var(--color-border);
 		border-radius: 8px;
-		background: white;
+		background: var(--color-button-bg);
+		color: var(--color-text);
 		cursor: pointer;
 	}
 

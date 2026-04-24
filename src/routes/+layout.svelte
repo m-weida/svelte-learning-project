@@ -1,7 +1,50 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import {
+		resetCustomTheme,
+		setTheme,
+		themeState,
+		type ThemeName,
+		type ThemeTokens,
+		updateCustomThemeToken
+	} from '$lib/themes/theme';
 
 	let { children } = $props();
+
+	type EditableThemeToken = keyof Pick<
+		ThemeTokens,
+		| 'primary'
+		| 'surface'
+		| 'surfaceSoft'
+		| 'text'
+		| 'textMuted'
+		| 'border'
+		| 'buttonBg'
+		| 'gradientStart'
+		| 'gradientEnd'
+	>;
+
+	const customTokenFields: Array<{ key: EditableThemeToken; label: string }> = [
+		{ key: 'primary', label: 'Primary' },
+		{ key: 'surface', label: 'Surface' },
+		{ key: 'surfaceSoft', label: 'Soft surface' },
+		{ key: 'text', label: 'Text' },
+		{ key: 'textMuted', label: 'Muted text' },
+		{ key: 'border', label: 'Border' },
+		{ key: 'buttonBg', label: 'Button' },
+		{ key: 'gradientStart', label: 'Gradient start' },
+		{ key: 'gradientEnd', label: 'Gradient end' }
+	];
+
+	function handleThemeChange(event: Event) {
+		const target = event.currentTarget as HTMLSelectElement;
+		setTheme(target.value as ThemeName);
+	}
+
+	function handleTokenChange(token: EditableThemeToken, event: Event) {
+		const target = event.currentTarget as HTMLInputElement;
+		updateCustomThemeToken(token, target.value);
+	}
 </script>
 
 <svelte:head>
@@ -11,8 +54,36 @@
 
 <div class="app-shell">
 	<header>
-		<h1>SvelteKit Learning Playground</h1>
-		<p>Hands-on examples for someone coming from React and Angular.</p>
+		<div class="title-block">
+			<h1>SvelteKit Learning Playground</h1>
+			<p>Hands-on examples for someone coming from React and Angular.</p>
+		</div>
+
+		<div class="theme-controls">
+			<label for="theme-select">Theme</label>
+			<select id="theme-select" onchange={handleThemeChange} value={$themeState.name}>
+				<option value="light">Light</option>
+				<option value="dark">Dark</option>
+				<option value="custom">Custom</option>
+			</select>
+		</div>
+
+		{#if $themeState.name === 'custom'}
+			<div class="custom-theme-grid">
+				{#each customTokenFields as field}
+					<label class="token-field">
+						<span>{field.label}</span>
+						<input
+							type="color"
+							value={$themeState.custom[field.key]}
+							onchange={(event) => handleTokenChange(field.key, event)}
+						/>
+					</label>
+				{/each}
+				<button type="button" class="reset-theme" onclick={resetCustomTheme}>Reset custom palette</button>
+			</div>
+		{/if}
+
 		<nav>
 			<a href="/">Overview</a>
 			<a href="/counter">Counter + Reactivity</a>
@@ -26,11 +97,45 @@
 </div>
 
 <style>
+	:global(:root) {
+		--color-bg: #f6f9fc;
+		--color-bg-alt: #e9f2ff;
+		--color-surface: #ffffff;
+		--color-surface-soft: #f7fbff;
+		--color-text: #1d2a38;
+		--color-text-muted: #71808e;
+		--color-border: #d9e5f2;
+		--color-primary: #0e5cb5;
+		--color-primary-soft: #eff6ff;
+		--color-button-bg: #eff7ff;
+		--color-input-bg: #ffffff;
+		--color-gradient-start: #f6f9fc;
+		--color-gradient-end: #e9f2ff;
+		--color-link: #0e5cb5;
+	}
+
+	:global(:root[data-theme='dark']) {
+		--color-bg: #111820;
+		--color-bg-alt: #1a2532;
+		--color-surface: #1f2b38;
+		--color-surface-soft: #243445;
+		--color-text: #ebf2fa;
+		--color-text-muted: #a4b3c4;
+		--color-border: #35506b;
+		--color-primary: #7cc0ff;
+		--color-primary-soft: #22384d;
+		--color-button-bg: #274058;
+		--color-input-bg: #172330;
+		--color-gradient-start: #0f1620;
+		--color-gradient-end: #1a2735;
+		--color-link: #9ed2ff;
+	}
+
 	:global(body) {
 		margin: 0;
 		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-		background: linear-gradient(135deg, #f6f9fc 0%, #e9f2ff 100%);
-		color: #1d2a38;
+		background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
+		color: var(--color-text);
 	}
 
 	.app-shell {
@@ -41,11 +146,15 @@
 	}
 
 	header {
-		background: #ffffffcc;
+		background: color-mix(in srgb, var(--color-surface) 88%, transparent);
 		backdrop-filter: blur(8px);
-		border: 1px solid #d9e5f2;
+		border: 1px solid var(--color-border);
 		border-radius: 14px;
 		padding: 1rem 1.25rem;
+	}
+
+	.title-block p {
+		color: var(--color-text-muted);
 	}
 
 	h1 {
@@ -65,19 +174,74 @@
 
 	a {
 		text-decoration: none;
-		color: #0e5cb5;
+		color: var(--color-link);
 		font-weight: 600;
 		padding: 0.35rem 0.6rem;
-		border: 1px solid #bed4ed;
+		border: 1px solid var(--color-border);
 		border-radius: 999px;
-		background: #eff6ff;
+		background: var(--color-primary-soft);
 	}
 
 	main {
 		margin-top: 1rem;
-		background: white;
-		border: 1px solid #d9e5f2;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
 		border-radius: 14px;
 		padding: 1.25rem;
+	}
+
+	.theme-controls {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.9rem;
+	}
+
+	.theme-controls label {
+		font-weight: 600;
+	}
+
+	select,
+	.reset-theme {
+		border: 1px solid var(--color-border);
+		background: var(--color-button-bg);
+		color: var(--color-text);
+		padding: 0.35rem 0.55rem;
+		border-radius: 8px;
+	}
+
+	.custom-theme-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+		gap: 0.65rem;
+		margin-bottom: 0.9rem;
+	}
+
+	.token-field {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.4rem 0.5rem;
+		border: 1px solid var(--color-border);
+		border-radius: 10px;
+		background: var(--color-surface-soft);
+		font-size: 0.9rem;
+	}
+
+	.token-field span {
+		color: var(--color-text-muted);
+	}
+
+	.token-field input[type='color'] {
+		inline-size: 2.25rem;
+		block-size: 1.6rem;
+		padding: 0;
+		border: 0;
+		background: transparent;
+	}
+
+	.reset-theme {
+		cursor: pointer;
 	}
 </style>

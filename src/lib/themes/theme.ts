@@ -1,0 +1,191 @@
+import { browser } from '$app/environment';
+import { writable } from 'svelte/store';
+
+export type ThemeName = 'light' | 'dark' | 'custom';
+
+export type ThemeTokens = {
+	bg: string;
+	bgAlt: string;
+	surface: string;
+	surfaceSoft: string;
+	text: string;
+	textMuted: string;
+	border: string;
+	primary: string;
+	primarySoft: string;
+	buttonBg: string;
+	inputBg: string;
+	gradientStart: string;
+	gradientEnd: string;
+	link: string;
+};
+
+export type ThemeState = {
+	name: ThemeName;
+	custom: ThemeTokens;
+};
+
+const STORAGE_KEY = 'svelte-playground-theme-v1';
+const HEX_COLOR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+const LIGHT_TOKENS: ThemeTokens = {
+	bg: '#f6f9fc',
+	bgAlt: '#e9f2ff',
+	surface: '#ffffff',
+	surfaceSoft: '#f7fbff',
+	text: '#1d2a38',
+	textMuted: '#71808e',
+	border: '#d9e5f2',
+	primary: '#0e5cb5',
+	primarySoft: '#eff6ff',
+	buttonBg: '#eff7ff',
+	inputBg: '#ffffff',
+	gradientStart: '#f6f9fc',
+	gradientEnd: '#e9f2ff',
+	link: '#0e5cb5'
+};
+
+const CSS_VAR_MAP: Record<keyof ThemeTokens, string> = {
+	bg: '--color-bg',
+	bgAlt: '--color-bg-alt',
+	surface: '--color-surface',
+	surfaceSoft: '--color-surface-soft',
+	text: '--color-text',
+	textMuted: '--color-text-muted',
+	border: '--color-border',
+	primary: '--color-primary',
+	primarySoft: '--color-primary-soft',
+	buttonBg: '--color-button-bg',
+	inputBg: '--color-input-bg',
+	gradientStart: '--color-gradient-start',
+	gradientEnd: '--color-gradient-end',
+	link: '--color-link'
+};
+
+const DEFAULT_STATE: ThemeState = {
+	name: 'light',
+	custom: { ...LIGHT_TOKENS }
+};
+
+function isThemeName(value: unknown): value is ThemeName {
+	return value === 'light' || value === 'dark' || value === 'custom';
+}
+
+function sanitizeTokenValue(value: unknown, fallback: string): string {
+	if (typeof value !== 'string') {
+		return fallback;
+	}
+
+	return HEX_COLOR.test(value) ? value : fallback;
+}
+
+function sanitizeTokens(value: unknown): ThemeTokens {
+	const source = value && typeof value === 'object' ? (value as Partial<ThemeTokens>) : {};
+
+	return {
+		bg: sanitizeTokenValue(source.bg, LIGHT_TOKENS.bg),
+		bgAlt: sanitizeTokenValue(source.bgAlt, LIGHT_TOKENS.bgAlt),
+		surface: sanitizeTokenValue(source.surface, LIGHT_TOKENS.surface),
+		surfaceSoft: sanitizeTokenValue(source.surfaceSoft, LIGHT_TOKENS.surfaceSoft),
+		text: sanitizeTokenValue(source.text, LIGHT_TOKENS.text),
+		textMuted: sanitizeTokenValue(source.textMuted, LIGHT_TOKENS.textMuted),
+		border: sanitizeTokenValue(source.border, LIGHT_TOKENS.border),
+		primary: sanitizeTokenValue(source.primary, LIGHT_TOKENS.primary),
+		primarySoft: sanitizeTokenValue(source.primarySoft, LIGHT_TOKENS.primarySoft),
+		buttonBg: sanitizeTokenValue(source.buttonBg, LIGHT_TOKENS.buttonBg),
+		inputBg: sanitizeTokenValue(source.inputBg, LIGHT_TOKENS.inputBg),
+		gradientStart: sanitizeTokenValue(source.gradientStart, LIGHT_TOKENS.gradientStart),
+		gradientEnd: sanitizeTokenValue(source.gradientEnd, LIGHT_TOKENS.gradientEnd),
+		link: sanitizeTokenValue(source.link, LIGHT_TOKENS.link)
+	};
+}
+
+function loadInitialState(): ThemeState {
+	if (!browser) {
+		return DEFAULT_STATE;
+	}
+
+	try {
+		const rawState = window.localStorage.getItem(STORAGE_KEY);
+		if (!rawState) {
+			return DEFAULT_STATE;
+		}
+
+		const parsed = JSON.parse(rawState) as Partial<ThemeState>;
+		return {
+			name: isThemeName(parsed.name) ? parsed.name : DEFAULT_STATE.name,
+			custom: sanitizeTokens(parsed.custom)
+		};
+	} catch {
+		return DEFAULT_STATE;
+	}
+}
+
+function persistState(state: ThemeState) {
+	if (!browser) {
+		return;
+	}
+
+	window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function applyThemeToDocument(state: ThemeState) {
+	if (!browser) {
+		return;
+	}
+
+	const root = document.documentElement;
+	root.setAttribute('data-theme', state.name);
+
+	for (const cssVarName of Object.values(CSS_VAR_MAP)) {
+		root.style.removeProperty(cssVarName);
+	}
+
+	if (state.name !== 'custom') {
+		return;
+	}
+
+	for (const tokenKey of Object.keys(CSS_VAR_MAP) as Array<keyof ThemeTokens>) {
+		root.style.setProperty(CSS_VAR_MAP[tokenKey], state.custom[tokenKey]);
+	}
+}
+
+const internalThemeState = writable<ThemeState>(loadInitialState());
+
+if (browser) {
+	internalThemeState.subscribe((state) => {
+		persistState(state);
+		applyThemeToDocument(state);
+	});
+}
+
+export const themeState = {
+	subscribe: internalThemeState.subscribe
+};
+
+export function setTheme(name: ThemeName) {
+	internalThemeState.update((state) => ({ ...state, name }));
+}
+
+export function updateCustomThemeToken(token: keyof ThemeTokens, value: string) {
+	if (!HEX_COLOR.test(value)) {
+		return;
+	}
+
+	internalThemeState.update((state) => ({
+		name: 'custom',
+		custom: {
+			...state.custom,
+			[token]: value
+		}
+	}));
+}
+
+export function resetCustomTheme() {
+	internalThemeState.update((state) => ({
+		...state,
+		custom: { ...LIGHT_TOKENS }
+	}));
+}
+
+export const themeStorageKey = STORAGE_KEY;
