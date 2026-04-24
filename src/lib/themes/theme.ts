@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 export type ThemeName = 'light' | 'dark' | 'custom';
 
@@ -25,8 +25,17 @@ export type ThemeState = {
 	custom: ThemeTokens;
 };
 
+export type ThemeExchangeV1 = {
+	version: 1;
+	name: 'custom';
+	custom: ThemeTokens;
+};
+
+export type ThemeImportResult = { ok: true } | { ok: false; error: string };
+
 const STORAGE_KEY = 'svelte-playground-theme-v1';
 const HEX_COLOR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const THEME_EXCHANGE_VERSION = 1;
 
 const LIGHT_TOKENS: ThemeTokens = {
 	bg: '#f6f9fc',
@@ -61,6 +70,7 @@ const CSS_VAR_MAP: Record<keyof ThemeTokens, string> = {
 	gradientEnd: '--color-gradient-end',
 	link: '--color-link'
 };
+const TOKEN_KEYS = Object.keys(CSS_VAR_MAP) as Array<keyof ThemeTokens>;
 
 const DEFAULT_STATE: ThemeState = {
 	name: 'light',
@@ -98,6 +108,54 @@ function sanitizeTokens(value: unknown): ThemeTokens {
 		gradientEnd: sanitizeTokenValue(source.gradientEnd, LIGHT_TOKENS.gradientEnd),
 		link: sanitizeTokenValue(source.link, LIGHT_TOKENS.link)
 	};
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+	return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function parseThemeTokensForImport(value: unknown): { ok: true; tokens: ThemeTokens } | { ok: false; error: string } {
+	if (!isObjectRecord(value)) {
+		return { ok: false, error: 'Theme file must include a custom token object.' };
+	}
+
+	const unknownKeys = Object.keys(value).filter((key) => !TOKEN_KEYS.includes(key as keyof ThemeTokens));
+	if (unknownKeys.length > 0) {
+		return { ok: false, error: `Theme file has unknown token(s): ${unknownKeys.join(', ')}.` };
+	}
+
+	const parsed = {} as ThemeTokens;
+
+	for (const key of TOKEN_KEYS) {
+		if (!(key in value)) {
+			return { ok: false, error: `Theme file is missing token "${key}".` };
+		}
+
+		const tokenValue = value[key];
+		if (typeof tokenValue !== 'string' || !HEX_COLOR.test(tokenValue)) {
+			return { ok: false, error: `Theme token "${key}" must be a valid hex color.` };
+		}
+
+		parsed[key] = tokenValue;
+	}
+
+	return { ok: true, tokens: parsed };
+}
+
+function parseThemeExchangePayload(value: unknown): { ok: true; tokens: ThemeTokens } | { ok: false; error: string } {
+	if (!isObjectRecord(value)) {
+		return { ok: false, error: 'Theme file must be a JSON object.' };
+	}
+
+	if (value.version !== THEME_EXCHANGE_VERSION) {
+		return { ok: false, error: `Theme file must have version ${THEME_EXCHANGE_VERSION}.` };
+	}
+
+	if (value.name !== 'custom') {
+		return { ok: false, error: 'Theme file name must be "custom".' };
+	}
+
+	return parseThemeTokensForImport(value.custom);
 }
 
 function loadInitialState(): ThemeState {
@@ -186,6 +244,41 @@ export function resetCustomTheme() {
 		...state,
 		custom: { ...LIGHT_TOKENS }
 	}));
+}
+
+export function getThemeExchangePayload(): ThemeExchangeV1 {
+	const state = get(internalThemeState);
+	return {
+		version: THEME_EXCHANGE_VERSION,
+		name: 'custom',
+		custom: { ...state.custom }
+	};
+}
+
+export function exportThemeJson(): string {
+	return JSON.stringify(getThemeExchangePayload(), null, 2);
+}
+
+export function importThemeJson(rawJson: string): ThemeImportResult {
+	let parsed: unknown;
+
+	try {
+		parsed = JSON.parse(rawJson);
+	} catch {
+		return { ok: false, error: 'Theme file is not valid JSON.' };
+	}
+
+	const payload = parseThemeExchangePayload(parsed);
+	if (!payload.ok) {
+		return payload;
+	}
+
+	internalThemeState.set({
+		name: 'custom',
+		custom: payload.tokens
+	});
+
+	return { ok: true };
 }
 
 export const themeStorageKey = STORAGE_KEY;

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import {
+		exportThemeJson,
+		importThemeJson,
 		resetCustomTheme,
 		setTheme,
 		themeState,
@@ -35,6 +37,11 @@
 		{ key: 'gradientStart', label: 'Gradient start' },
 		{ key: 'gradientEnd', label: 'Gradient end' }
 	];
+	let importMessage = $state<{ kind: 'idle' | 'success' | 'error'; text: string }>({
+		kind: 'idle',
+		text: ''
+	});
+	let importFileInput = $state<HTMLInputElement | null>(null);
 
 	function handleThemeChange(event: Event) {
 		const target = event.currentTarget as HTMLSelectElement;
@@ -44,6 +51,49 @@
 	function handleTokenChange(token: EditableThemeToken, event: Event) {
 		const target = event.currentTarget as HTMLInputElement;
 		updateCustomThemeToken(token, target.value);
+	}
+
+	function getThemeExportFilename() {
+		const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+		return `theme-${timestamp}.json`;
+	}
+
+	function handleThemeDownload() {
+		const json = exportThemeJson();
+		const blob = new Blob([json], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = getThemeExportFilename();
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+		importMessage = { kind: 'success', text: 'Theme downloaded.' };
+	}
+
+	function openThemeImportPicker() {
+		importFileInput?.click();
+	}
+
+	async function handleThemeImport(event: Event) {
+		const target = event.currentTarget as HTMLInputElement;
+		const file = target.files?.[0];
+		if (!file) {
+			return;
+		}
+
+		try {
+			const rawJson = await file.text();
+			const result = importThemeJson(rawJson);
+			importMessage = result.ok
+				? { kind: 'success', text: 'Theme imported.' }
+				: { kind: 'error', text: result.error };
+		} catch {
+			importMessage = { kind: 'error', text: 'Could not read the selected file.' };
+		}
+
+		target.value = '';
 	}
 </script>
 
@@ -82,6 +132,26 @@
 				{/each}
 				<button type="button" class="reset-theme" onclick={resetCustomTheme}>Reset custom palette</button>
 			</div>
+		{/if}
+
+		{#if $themeState.name === 'custom'}
+			<div class="theme-io-controls">
+				<button type="button" class="theme-io-button" onclick={handleThemeDownload}>
+					Download custom theme
+				</button>
+				<button type="button" class="theme-io-button" onclick={openThemeImportPicker}>Import theme</button>
+				<input
+					bind:this={importFileInput}
+					class="theme-import-input"
+					type="file"
+					accept="application/json,.json"
+					onchange={handleThemeImport}
+				/>
+			</div>
+
+			{#if importMessage.kind !== 'idle'}
+				<p class="theme-import-message" data-kind={importMessage.kind}>{importMessage.text}</p>
+			{/if}
 		{/if}
 
 		<nav>
@@ -202,7 +272,8 @@
 	}
 
 	select,
-	.reset-theme {
+	.reset-theme,
+	.theme-io-button {
 		border: 1px solid var(--color-border);
 		background: var(--color-button-bg);
 		color: var(--color-text);
@@ -243,5 +314,37 @@
 
 	.reset-theme {
 		cursor: pointer;
+	}
+
+	.theme-io-controls {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-bottom: 0.9rem;
+	}
+
+	.theme-io-button {
+		cursor: pointer;
+	}
+
+	.theme-import-input {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.theme-import-message {
+		margin: 0 0 0.9rem;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+	}
+
+	.theme-import-message[data-kind='error'] {
+		color: #c62828;
 	}
 </style>
