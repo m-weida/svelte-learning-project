@@ -13,6 +13,22 @@
 			<h3>Form + List</h3>
 			<p>Learn bindings, keyed lists, and immutable updates.</p>
 		</a>
+		<a class="card" href="/runes">
+			<h3>Runes Lab</h3>
+			<p>Practice state, derived values, and effects together.</p>
+		</a>
+		<a class="card" href="/components">
+			<h3>Component Composition</h3>
+			<p>Build UI from reusable child components and slots.</p>
+		</a>
+		<a class="card" href="/transitions">
+			<h3>Transitions + Animation</h3>
+			<p>Animate list entry, exit, and layout changes.</p>
+		</a>
+		<a class="card" href="/stores-context">
+			<h3>Stores + Context</h3>
+			<p>Share reactive data and scoped dependencies.</p>
+		</a>
 	</div>
 
 	<h3>Mental model mapping</h3>
@@ -63,6 +79,22 @@
 				<strong>Go to /todos</strong>
 				<p>Practice bindings, keyed lists, and form-driven state changes.</p>
 			</li>
+			<li>
+				<strong>Go to /runes</strong>
+				<p>Combine <code>$state</code>, <code>$derived</code>, and <code>$effect</code>.</p>
+			</li>
+			<li>
+				<strong>Go to /components</strong>
+				<p>Compose multiple components with props and slots.</p>
+			</li>
+			<li>
+				<strong>Go to /transitions</strong>
+				<p>Use transitions and animation to improve interaction feel.</p>
+			</li>
+			<li>
+				<strong>Go to /stores-context</strong>
+				<p>Share state with stores and pass dependencies with context.</p>
+			</li>
 		</ol>
 
 		<h4>Mini challenges</h4>
@@ -70,6 +102,10 @@
 			<li><strong>/:</strong> add one extra concept row in the mapping table.</li>
 			<li><strong>/counter:</strong> implement undo/redo with history.</li>
 			<li><strong>/todos:</strong> add filters (all/active/completed).</li>
+			<li><strong>/runes:</strong> add a guard that prevents count from going below zero.</li>
+			<li><strong>/components:</strong> extract a shared action bar component.</li>
+			<li><strong>/transitions:</strong> replace one transition and compare feel.</li>
+			<li><strong>/stores-context:</strong> move notes to a module-level store.</li>
 		</ul>
 	</section>
 </section>

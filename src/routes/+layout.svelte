@@ -158,6 +158,10 @@
 			<a href="/">Overview</a>
 			<a href="/counter">Counter + Reactivity</a>
 			<a href="/todos">Form + List</a>
+			<a href="/runes">Runes Lab</a>
+			<a href="/components">Component Composition</a>
+			<a href="/transitions">Transitions + Animation</a>
+			<a href="/stores-context">Stores + Context</a>
 		</nav>
 	</header>
 

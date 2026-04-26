@@ -11,19 +11,27 @@ pnpm dev
 
 Then open the local URL shown in the terminal.
 
-## Phase 1 learning path (guided)
+## Phase 1 + Phase 2 learning path (guided)
 
 Use this order for the smoothest ramp-up:
 
 - [ ] Start at `/` for the concept map.
 - [ ] Move to `/counter` to practice reactivity.
 - [ ] Move to `/todos` to practice bindings and list updates.
+- [ ] Move to `/runes` to combine state, derived values, and effects.
+- [ ] Move to `/components` to practice component composition.
+- [ ] Move to `/transitions` to practice transitions and animation.
+- [ ] Move to `/stores-context` to practice shared state and context.
 
 If you are coming from React or Angular, treat this as:
 
 - `/`: mental model translation
 - `/counter`: local state and derived values
 - `/todos`: forms and list rendering with less boilerplate
+- `/runes`: runes working together in one lab
+- `/components`: reusable component composition
+- `/transitions`: UI motion and list animation
+- `/stores-context`: scoped dependency sharing
 
 ## Route outcomes and challenge tasks
 
@@ -66,6 +74,57 @@ Try this next:
 - Add "edit todo" inline.
 - Add filters: all, active, completed.
 - Persist todos in local storage.
+
+### `/runes`
+
+What you should learn:
+
+- `\$state`, `\$derived`, and `\$effect` in one focused workflow.
+- How derived values and effect logs react to state updates.
+
+Try this next:
+
+- Add a lower-bound toggle that blocks negative count values.
+- Add an extra derived value that categorizes progress toward target.
+
+### `/components`
+
+What you should learn:
+
+- Parent-to-child props for reusable pieces.
+- Slot-based actions to customize card behavior.
+- Composition with small focused components.
+
+Try this next:
+
+- Add a fourth lesson card and custom action.
+- Extract a shared action bar component.
+
+### `/transitions`
+
+What you should learn:
+
+- Enter/leave transitions with `in:` and `out:` directives.
+- Layout animation with `animate:flip`.
+- Motion tuning with reduced duration.
+
+Try this next:
+
+- Swap one transition and compare interaction feel.
+- Default reduced motion to true and verify usability.
+
+### `/stores-context`
+
+What you should learn:
+
+- Store-driven shared state updates.
+- Passing dependencies with `setContext` / `getContext`.
+- Derived store summaries for UI counters.
+
+Try this next:
+
+- Move notes to a module-level store and reuse it in another route.
+- Extract list rendering to a child context consumer.
 
 ## Handy scripts
 
