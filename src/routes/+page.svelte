@@ -47,6 +47,31 @@
 			</tr>
 		</tbody>
 	</table>
+
+	<section class="learning-path">
+		<h3>Guided path</h3>
+		<ol>
+			<li>
+				<strong>Start at this page</strong>
+				<p>Learn the concept mapping and navigation structure.</p>
+			</li>
+			<li>
+				<strong>Go to /counter</strong>
+				<p>Practice <code>$state</code>, <code>$derived</code>, and update flows.</p>
+			</li>
+			<li>
+				<strong>Go to /todos</strong>
+				<p>Practice bindings, keyed lists, and form-driven state changes.</p>
+			</li>
+		</ol>
+
+		<h4>Mini challenges</h4>
+		<ul>
+			<li><strong>/:</strong> add one extra concept row in the mapping table.</li>
+			<li><strong>/counter:</strong> implement undo/redo with history.</li>
+			<li><strong>/todos:</strong> add filters (all/active/completed).</li>
+		</ul>
+	</section>
 </section>
 
 <style>
@@ -104,5 +129,26 @@
 
 	h3 {
 		margin-top: 1rem;
+	}
+
+	.learning-path {
+		margin-top: 1.25rem;
+		padding: 0.9rem;
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
+		background: var(--color-surface-soft);
+	}
+
+	ol {
+		padding-left: 1.25rem;
+	}
+
+	ol p {
+		margin: 0.2rem 0 0.6rem;
+		color: var(--color-text-muted);
+	}
+
+	h4 {
+		margin: 0.6rem 0 0.35rem;
 	}
 </style>
