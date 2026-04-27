@@ -162,6 +162,11 @@
 			<a href="/components">Component Composition</a>
 			<a href="/transitions">Transitions + Animation</a>
 			<a href="/stores-context">Stores + Context</a>
+			<a href="/kit-load">Kit Load</a>
+			<a href="/kit-actions">Kit Actions</a>
+			<a href="/kit-endpoints">Kit Endpoints</a>
+			<a href="/kit-dynamic-routes">Kit Dynamic Routes</a>
+			<a href="/kit-cookies">Kit Cookies</a>
 		</nav>
 	</header>
 
