@@ -11,9 +11,12 @@
 
 	let { data, form } = $props();
 	let itemsPromise = $derived(data.items as Promise<LearningItem[]>);
+	let theme = $state('');
+	let density = $state('');
 
 	let createPending = $state(false);
 	let selectedId = $state<string | null>(null);
+	let lastSelectedId = $state<string | null>(null);
 	let editTitle = $state('');
 	let editStatus = $state<LearningStatus>('todo');
 
@@ -27,11 +30,25 @@
 		{ value: 'compact', label: 'Compact' }
 	];
 
-	const enhanceWith = (onStart?: () => void, onDone?: () => void) => {
+	$effect(() => {
+		theme = data.preferences.theme;
+		density = data.preferences.density;
+	});
+
+	type UpdateOptions = {
+		reset?: boolean;
+		invalidateAll?: boolean;
+	};
+
+	const enhanceWith = (
+		onStart?: () => void,
+		onDone?: () => void,
+		updateOptions?: UpdateOptions
+	) => {
 		return () => {
 			onStart?.();
-			return async ({ update }: { update: () => Promise<void> }) => {
-				await update();
+			return async ({ update }: { update: (options?: UpdateOptions) => Promise<void> }) => {
+				await update(updateOptions);
 				onDone?.();
 			};
 		};
@@ -47,12 +64,51 @@
 		editTitle = next.title;
 		editStatus = next.status;
 	}
+
+	$effect(() => {
+		if (form?.updateSuccess && typeof form?.selectedId === 'string') {
+			selectedId = form.selectedId;
+			return;
+		}
+	});
+
+	$effect(() => {
+		if (selectedId === lastSelectedId) {
+			return;
+		}
+
+		if (!selectedId) {
+			lastSelectedId = null;
+			return;
+		}
+
+		let cancelled = false;
+
+		itemsPromise.then((items) => {
+			if (cancelled) {
+				return;
+			}
+
+			const next = items.find((item) => item.id === selectedId);
+			if (!next) {
+				return;
+			}
+
+			editTitle = next.title;
+			editStatus = next.status;
+			lastSelectedId = selectedId;
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	});
 </script>
 
 <section
 	class="capstone"
-	data-density={data.preferences.density}
-	data-theme={data.preferences.theme}
+	data-density={density}
+	data-theme={theme}
 >
 	<header class="capstone-header">
 		<h2>Capstone: Learning Tracker</h2>
@@ -158,27 +214,38 @@
 			<aside class="side-panel">
 				<section class="panel">
 					<h3>Preferences</h3>
-					<form method="POST" action="?/preferences" use:enhance={enhanceWith()} class="stack">
-						<label for="theme">Theme</label>
-						<select id="theme" name="theme" value={data.preferences.theme}>
-							{#each themeOptions as option (option.value)}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						</select>
+					<div class="stack">
+						<form
+							method="POST"
+							action="?/preferences"
+							use:enhance={enhanceWith(undefined, undefined, { reset: false })}
+							class="stack"
+						>
+							<label for="theme">Theme</label>
+							<select id="theme" name="theme" bind:value={theme}>
+								{#each themeOptions as option (option.value)}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
 
-						<label for="density">Density</label>
-						<select id="density" name="density" value={data.preferences.density}>
-							{#each densityOptions as option (option.value)}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						</select>
+							<label for="density">Density</label>
+							<select id="density" name="density" bind:value={density}>
+								{#each densityOptions as option (option.value)}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
 
-						<button type="submit">Save preferences</button>
-					</form>
+							<button type="submit">Save preferences</button>
+						</form>
 
-					<form method="POST" action="?/resetPreferences" use:enhance={enhanceWith()}>
-						<button type="submit" class="ghost">Reset to defaults</button>
-					</form>
+						<form
+							method="POST"
+							action="?/resetPreferences"
+							use:enhance={enhanceWith(undefined, undefined, { reset: false })}
+						>
+							<button type="submit" class="ghost">Reset to defaults</button>
+						</form>
+					</div>
 
 					{#if form?.preferencesSaved}
 						<p class="success">Preferences saved.</p>
@@ -192,7 +259,12 @@
 					<h3>Details</h3>
 					{#if selected}
 						<div class="detail-card" transition:fade>
-							<form method="POST" action="?/update" use:enhance={enhanceWith()} class="stack">
+							<form
+								method="POST"
+								action="?/update"
+								use:enhance={enhanceWith(undefined, undefined, { reset: false })}
+								class="stack"
+							>
 								<input type="hidden" name="id" value={selected.id} />
 								<label for="edit-title">Title</label>
 								<input
