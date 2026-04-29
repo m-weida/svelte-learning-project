@@ -11,7 +11,7 @@ pnpm dev
 
 Then open the local URL shown in the terminal.
 
-## Phase 1 + Phase 2 + Phase 3 learning path (guided)
+## Learning path
 
 Use this order for the smoothest ramp-up:
 
@@ -206,9 +206,22 @@ Try this next:
 ```sh
 pnpm dev
 pnpm check
+pnpm test
 pnpm build
 pnpm preview
+pnpm test:e2e
+pnpm test:all
 ```
+
+## Quality workflow
+
+- `pnpm check` runs Svelte and TypeScript diagnostics.
+- `pnpm test` runs Vitest unit and component tests.
+- `pnpm build` verifies the production build.
+- `pnpm test:e2e` starts the preview server and runs Cypress browser tests.
+- `pnpm test:all` runs the full local quality gate in the same order as CI.
+
+GitHub Actions is configured in `.github/workflows/ci.yml` to run check, test, build, and Cypress E2E tests on pushes and pull requests.
 
 ## Theme export/import
 
