@@ -1,0 +1,13 @@
+{
+	"extends": "./tsconfig.json",
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.svelte",
+		"cypress.config.ts",
+		"cypress/**/*.ts",
+		"vite.config.ts",
+		"svelte.config.js",
+		"eslint.config.js"
+	],
+	"exclude": [".svelte-kit/**", "build/**", "dist/**"]
+}
