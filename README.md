@@ -27,6 +27,7 @@ Use this order for the smoothest ramp-up:
 - [ ] Move to `/kit-endpoints` to practice GET/POST endpoint handlers.
 - [ ] Move to `/kit-dynamic-routes` to practice route params.
 - [ ] Move to `/kit-cookies` to practice persisted preferences with cookies.
+- [ ] Move to `/capstone` to combine the full SvelteKit workflow.
 
 If you are coming from React or Angular, treat this as:
 
@@ -42,6 +43,7 @@ If you are coming from React or Angular, treat this as:
 - `/kit-endpoints`: explicit request/response handlers
 - `/kit-dynamic-routes`: dynamic param-based page routing
 - `/kit-cookies`: persisted preferences across requests
+- `/capstone`: end-to-end flow with load, actions, endpoints, and preferences
 
 ## Route outcomes and challenge tasks
 
@@ -201,11 +203,25 @@ Try this next:
 - Add a new `compactMode` cookie preference.
 - Reuse preferences in another route's server load.
 
+### `/capstone`
+
+What you should learn:
+
+- End-to-end workflow that combines load, actions, and endpoints.
+- Persisted UI preferences that survive refreshes.
+- Transitions tied to real data updates.
+
+Try this next:
+
+- Add a fourth status and update the advance logic.
+- Add a new preference and apply it to the UI.
+
 ## Handy scripts
 
 ```sh
 pnpm dev
 pnpm check
+pnpm lint
 pnpm test
 pnpm build
 pnpm preview
@@ -216,6 +232,7 @@ pnpm test:all
 ## Quality workflow
 
 - `pnpm check` runs Svelte and TypeScript diagnostics.
+- `pnpm lint` runs ESLint, including deprecation warnings.
 - `pnpm test` runs Vitest unit and component tests.
 - `pnpm build` verifies the production build.
 - `pnpm test:e2e` starts the preview server and runs Cypress browser tests.

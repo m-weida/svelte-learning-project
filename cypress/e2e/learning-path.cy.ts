@@ -23,4 +23,16 @@ describe('learning path', () => {
 			expect(response.body.rows).to.include('Use named actions for multi-form pages.');
 		});
 	});
+
+	it('adds and advances a capstone item', () => {
+		cy.visit('/capstone');
+		cy.contains('h2', 'Capstone: Learning Tracker').should('be.visible');
+		cy.get('input[name="title"]').type('Draft endpoint walkthrough');
+		cy.contains('button', 'Add item').click();
+		cy.contains('li', 'Draft endpoint walkthrough').should('be.visible');
+		cy.contains('li', 'Draft endpoint walkthrough').within(() => {
+			cy.contains('button', 'Advance').click();
+			cy.contains('In progress').should('be.visible');
+		});
+	});
 });
