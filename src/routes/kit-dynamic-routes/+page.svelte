@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { kitLessons } from '$lib/kit-lessons';
 </script>
 
@@ -12,7 +13,7 @@
 	<ul>
 		{#each kitLessons as lesson (lesson.slug)}
 			<li>
-				<a href={`/kit-dynamic-routes/${lesson.slug}`}>{lesson.title}</a>
+				<a href={resolve(`/kit-dynamic-routes/${lesson.slug}`)}>{lesson.title}</a>
 				<p>{lesson.focus}</p>
 			</li>
 		{/each}

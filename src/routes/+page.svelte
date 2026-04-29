@@ -1,3 +1,7 @@
+<script lang="ts">
+	import { resolve } from '$app/paths';
+</script>
+
 <section>
 	<h2>Welcome</h2>
 	<p>
@@ -5,49 +9,53 @@
 	</p>
 
 	<div class="cards">
-		<a class="card" href="/counter">
+		<a class="card" href={resolve('/counter')}>
 			<h3>Counter + Reactivity</h3>
 			<p>Learn <code>$state</code>, <code>$derived</code> and event handlers.</p>
 		</a>
-		<a class="card" href="/todos">
+		<a class="card" href={resolve('/todos')}>
 			<h3>Form + List</h3>
 			<p>Learn bindings, keyed lists, and immutable updates.</p>
 		</a>
-		<a class="card" href="/runes">
+		<a class="card" href={resolve('/runes')}>
 			<h3>Runes Lab</h3>
 			<p>Practice state, derived values, and effects together.</p>
 		</a>
-		<a class="card" href="/components">
+		<a class="card" href={resolve('/components')}>
 			<h3>Component Composition</h3>
 			<p>Build UI from reusable child components and slots.</p>
 		</a>
-		<a class="card" href="/transitions">
+		<a class="card" href={resolve('/transitions')}>
 			<h3>Transitions + Animation</h3>
 			<p>Animate list entry, exit, and layout changes.</p>
 		</a>
-		<a class="card" href="/stores-context">
+		<a class="card" href={resolve('/stores-context')}>
 			<h3>Stores + Context</h3>
 			<p>Share reactive data and scoped dependencies.</p>
 		</a>
-		<a class="card" href="/kit-load">
+		<a class="card" href={resolve('/kit-load')}>
 			<h3>Kit Load</h3>
 			<p>Fetch and shape data on the server before rendering.</p>
 		</a>
-		<a class="card" href="/kit-actions">
+		<a class="card" href={resolve('/kit-actions')}>
 			<h3>Kit Actions</h3>
 			<p>Handle form submissions with server validation.</p>
 		</a>
-		<a class="card" href="/kit-endpoints">
+		<a class="card" href={resolve('/kit-endpoints')}>
 			<h3>Kit Endpoints</h3>
 			<p>Build JSON handlers with <code>+server.ts</code>.</p>
 		</a>
-		<a class="card" href="/kit-dynamic-routes">
+		<a class="card" href={resolve('/kit-dynamic-routes')}>
 			<h3>Kit Dynamic Routes</h3>
 			<p>Use params with <code>[segment]</code> route files.</p>
 		</a>
-		<a class="card" href="/kit-cookies">
+		<a class="card" href={resolve('/kit-cookies')}>
 			<h3>Kit Cookies</h3>
 			<p>Persist lightweight server-aware preferences.</p>
+		</a>
+		<a class="card" href={resolve('/capstone')}>
+			<h3>Capstone</h3>
+			<p>Combine load, actions, endpoints, transitions, and cookies.</p>
 		</a>
 	</div>
 
@@ -135,6 +143,10 @@
 				<strong>Go to /kit-cookies</strong>
 				<p>Persist and read user preferences through cookies.</p>
 			</li>
+			<li>
+				<strong>Go to /capstone</strong>
+				<p>Ship a mini app that stitches the full workflow together.</p>
+			</li>
 		</ol>
 
 		<h4>Mini challenges</h4>
@@ -151,6 +163,7 @@
 			<li><strong>/kit-endpoints:</strong> add one DELETE handler and call it from UI.</li>
 			<li><strong>/kit-dynamic-routes:</strong> add a second dynamic path segment.</li>
 			<li><strong>/kit-cookies:</strong> add one more persisted cookie preference.</li>
+			<li><strong>/capstone:</strong> add a new status or preference and wire it end-to-end.</li>
 		</ul>
 	</section>
 </section>

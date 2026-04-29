@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	let { data } = $props();
 </script>
 
@@ -13,12 +14,16 @@
 	</div>
 
 	<nav>
-		<a href="/kit-dynamic-routes">Back to lesson list</a>
+		<a href={resolve('/kit-dynamic-routes')}>Back to lesson list</a>
 		{#if data.previous}
-			<a href={`/kit-dynamic-routes/${data.previous.slug}`}>Previous: {data.previous.title}</a>
+			<a href={resolve(`/kit-dynamic-routes/${data.previous.slug}`)}>
+				Previous: {data.previous.title}
+			</a>
 		{/if}
 		{#if data.next}
-			<a href={`/kit-dynamic-routes/${data.next.slug}`}>Next: {data.next.title}</a>
+			<a href={resolve(`/kit-dynamic-routes/${data.next.slug}`)}>
+				Next: {data.next.title}
+			</a>
 		{/if}
 	</nav>
 </section>

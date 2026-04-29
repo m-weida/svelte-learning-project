@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import favicon from '$lib/assets/favicon.svg';
 	import {
 		exportThemeJson,
@@ -120,7 +121,7 @@
 
 		{#if $themeState.name === 'custom'}
 			<div class="custom-theme-grid">
-				{#each customTokenFields as field}
+				{#each customTokenFields as field (field.key)}
 					<label class="token-field">
 						<span>{field.label}</span>
 						<input
@@ -155,18 +156,19 @@
 		{/if}
 
 		<nav>
-			<a href="/">Overview</a>
-			<a href="/counter">Counter + Reactivity</a>
-			<a href="/todos">Form + List</a>
-			<a href="/runes">Runes Lab</a>
-			<a href="/components">Component Composition</a>
-			<a href="/transitions">Transitions + Animation</a>
-			<a href="/stores-context">Stores + Context</a>
-			<a href="/kit-load">Kit Load</a>
-			<a href="/kit-actions">Kit Actions</a>
-			<a href="/kit-endpoints">Kit Endpoints</a>
-			<a href="/kit-dynamic-routes">Kit Dynamic Routes</a>
-			<a href="/kit-cookies">Kit Cookies</a>
+			<a href={resolve('/')}>Overview</a>
+			<a href={resolve('/counter')}>Counter + Reactivity</a>
+			<a href={resolve('/todos')}>Form + List</a>
+			<a href={resolve('/runes')}>Runes Lab</a>
+			<a href={resolve('/components')}>Component Composition</a>
+			<a href={resolve('/transitions')}>Transitions + Animation</a>
+			<a href={resolve('/stores-context')}>Stores + Context</a>
+			<a href={resolve('/kit-load')}>Kit Load</a>
+			<a href={resolve('/kit-actions')}>Kit Actions</a>
+			<a href={resolve('/kit-endpoints')}>Kit Endpoints</a>
+			<a href={resolve('/kit-dynamic-routes')}>Kit Dynamic Routes</a>
+			<a href={resolve('/kit-cookies')}>Kit Cookies</a>
+			<a href={resolve('/capstone')}>Capstone</a>
 		</nav>
 	</header>
 

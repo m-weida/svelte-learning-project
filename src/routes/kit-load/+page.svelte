@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	let { data } = $props();
 
 	const levelOptions = ['all', 'beginner', 'intermediate', 'advanced'];
@@ -13,8 +14,10 @@
 	<div class="panel">
 		<h3>Filter by level</h3>
 		<div class="chips">
-			{#each levelOptions as option}
-				<a class:selected={data.level === option} href={`/kit-load?level=${option}`}>{option}</a>
+			{#each levelOptions as option (option)}
+				<a class:selected={data.level === option} href={resolve(`/kit-load?level=${option}`)}>
+					{option}
+				</a>
 			{/each}
 		</div>
 		<p><strong>Visible:</strong> {data.visibleCount} / {data.totalCount}</p>
