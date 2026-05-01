@@ -16,7 +16,6 @@
 
 	let createPending = $state(false);
 	let selectedId = $state<string | null>(null);
-	let lastSelectedId = $state<string | null>(null);
 	let editTitle = $state('');
 	let editStatus = $state<LearningStatus>('todo');
 
@@ -73,12 +72,7 @@
 	});
 
 	$effect(() => {
-		if (selectedId === lastSelectedId) {
-			return;
-		}
-
 		if (!selectedId) {
-			lastSelectedId = null;
 			return;
 		}
 
@@ -96,7 +90,6 @@
 
 			editTitle = next.title;
 			editStatus = next.status;
-			lastSelectedId = selectedId;
 		});
 
 		return () => {

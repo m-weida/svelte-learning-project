@@ -30,9 +30,12 @@ describe('learning path', () => {
 		cy.get('input[name="title"]').type('Draft endpoint walkthrough');
 		cy.contains('button', 'Add item').click();
 		cy.contains('li', 'Draft endpoint walkthrough').should('be.visible');
+		cy.contains('button', 'Draft endpoint walkthrough').click();
+		cy.get('#edit-status').should('have.value', 'todo');
 		cy.contains('li', 'Draft endpoint walkthrough').within(() => {
 			cy.contains('button', 'Advance').click();
 			cy.contains('In progress').should('be.visible');
 		});
+		cy.get('#edit-status').should('have.value', 'in-progress');
 	});
 });

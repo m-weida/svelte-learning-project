@@ -29,7 +29,7 @@ export default [
 			parser: svelteParser,
 			parserOptions: {
 				parser: tsParser,
-				project: './tsconfig.eslint.json',
+				projectService: true,
 				extraFileExtensions: ['.svelte']
 			}
 		},
