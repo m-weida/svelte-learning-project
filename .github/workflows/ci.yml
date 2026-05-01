@@ -10,6 +10,21 @@ jobs:
   quality:
     if: ${{ github.event_name == 'pull_request' || github.event.head_commit.committer.name != 'GitHub' || !contains(github.event.head_commit.message, ' (#') }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Check
+            command: pnpm check
+            needs_cypress: false
+          - name: Unit and component tests
+            command: pnpm test
+            needs_cypress: false
+          - name: Cypress E2E tests
+            command: pnpm test:e2e
+            needs_cypress: true
+
+    name: ${{ matrix.name }}
 
     steps:
       - name: Checkout
@@ -27,6 +42,7 @@ jobs:
           cache: pnpm
 
       - name: Cache Cypress binary
+        if: ${{ matrix.needs_cypress }}
         uses: actions/cache@v5
         with:
           path: ~/.cache/Cypress
@@ -36,16 +52,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Verify Cypress binary
+        if: ${{ matrix.needs_cypress }}
         run: pnpm exec cypress verify || pnpm exec cypress install
 
-      - name: Check
-        run: pnpm check
-
-      - name: Unit and component tests
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
-
-      - name: Cypress E2E tests
-        run: pnpm test:e2e
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.command }}
