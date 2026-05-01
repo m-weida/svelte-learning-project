@@ -258,10 +258,6 @@ Theme files use this shape:
 }
 ```
 
-## Plan
-
-Project roadmap is tracked in `plan.md`.
-
 ## How this project was scaffolded
 
 ```sh
