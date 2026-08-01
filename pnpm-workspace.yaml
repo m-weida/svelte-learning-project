@@ -3,3 +3,6 @@ onlyBuiltDependencies:
   - cypress
 
 minimumReleaseAge: 4320
+
+allowBuilds:
+  cypress: true
