@@ -40,13 +40,13 @@
 	};
 
 	const enhanceWith = (
-		onStart?: () => void,
-		onDone?: () => void,
-		updateOptions?: UpdateOptions
+		onStart: (() => void) | undefined = undefined,
+		onDone: (() => void) | undefined = undefined,
+		updateOptions: UpdateOptions | undefined = undefined
 	) => {
 		return () => {
 			onStart?.();
-			return async ({ update }: { update: (options?: UpdateOptions) => Promise<void> }) => {
+			return async ({ update }: { update: (options: UpdateOptions | undefined) => Promise<void> }) => {
 				await update(updateOptions);
 				onDone?.();
 			};
